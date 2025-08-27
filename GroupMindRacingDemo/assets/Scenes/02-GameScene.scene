@@ -181,7 +181,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 655.6555772994129,
+    "_orthoHeight": 678.5301016419077,
     "_near": 0,
     "_far": 2000,
     "_color": {
@@ -437,9 +437,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 126,
+      "r": 135,
       "g": 240,
-      "b": 222,
+      "b": 126,
       "a": 255
     },
     "_spriteFrame": {
@@ -826,7 +826,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 177.636,
+      "x": 0,
       "y": 0,
       "z": 0
     },
@@ -851,7 +851,7 @@
       "y": 0,
       "z": 0
     },
-    "_id": "e2KkCWrN9LHKQroYTCCah9"
+    "_id": "d5iFzzLJNCcpnjs743UiuL"
   },
   {
     "__type__": "cc.UITransform",
@@ -865,7 +865,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 42.255859375,
+      "width": 350,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -873,7 +873,7 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_id": "8fS/nY2rZD/ZCgMbgNh5OY"
+    "_id": "c1jbVwXM1M6ZX1sfr97VNQ"
   },
   {
     "__type__": "cc.Label",
@@ -895,11 +895,11 @@
       "b": 255,
       "a": 255
     },
-    "_string": "label",
+    "_string": "哈基米娜美鲁多",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
-    "_fontSize": 20,
+    "_actualFontSize": 50,
+    "_fontSize": 50,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
@@ -935,7 +935,7 @@
       "y": 2
     },
     "_shadowBlur": 2,
-    "_id": "33yfWtzBdJu5pYdkyLup8V"
+    "_id": "a7rJGqT1BOYIbwSZn/Xcsu"
   },
   {
     "__type__": "cc.UITransform",
