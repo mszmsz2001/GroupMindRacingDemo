@@ -1,8 +1,8 @@
 import { _decorator, Component, Node, UITransform, view } from 'cc';
 const { ccclass, property } = _decorator;
 
-@ccclass('RacingTrack')
-export class RacingTrack extends Component {
+@ccclass('ScrollingBackground')
+export class ScrollingBackground extends Component {
 
     // 添加背景属性面板
     @property(Node)
@@ -10,9 +10,9 @@ export class RacingTrack extends Component {
     @property(Node)
     bg02: Node = null;
 
-    // 设置背景移动速度
-    @property({ type: Number, tooltip: "背景移动速度" })
-    bgSpeed: number = 100;
+    // 不再需要 @property，因为它将由父节点控制
+    // 但它仍然是一个 public 变量，外部可以访问和修改
+    public bgSpeed: number = 100;
 
     // 背景高度
     private bgHeight: number = 0;
@@ -21,10 +21,12 @@ export class RacingTrack extends Component {
 
     start() {
         // 记录初始位置
-        const visibleHeight = view.getVisibleSize().height;         // 获取可视区域高度，即画布画板
         this.bgHeight = this.bg01.getComponent(UITransform).height; // 获取1个背景高度，因为两个背景是相同的
 
-        this.canvasBottomY = -visibleHeight / 2; // 计算画布底部的Y坐标
+        /* 设置了赛道父节点的Y坐标，所以可以注释掉
+        // const visibleHeight = view.getVisibleSize().height;         // 获取可视区域高度，即画布画板
+        // this.canvasBottomY = -visibleHeight / 2; // 计算画布底部的Y坐标
+        */
 
         // 设置初始位置,防止摆放错误
         this.bg01.setPosition(0, this.canvasBottomY + this.bgHeight/2);
