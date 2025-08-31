@@ -14,7 +14,7 @@ export class StartMenu extends Component {
     // 开始游戏按钮点击事件
     onStartButtonClick() {
         // 打开场景
-        director.loadScene('01-GameScene');
+        director.loadScene('02-GameScene');
     }
 }
 
