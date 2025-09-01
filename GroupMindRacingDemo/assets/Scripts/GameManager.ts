@@ -42,10 +42,10 @@ export class GameManager extends Component {
         switch (this.gameState) {
             case GameState.WAITING:
                 // 更新引导面板标签
-                this.GameGuidanceLable.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer)+'秒后开始';
+                this.GameGuidanceLable.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer).toString() + '秒后开始';
 
                 if (this.timer <= 0) {
-                    this.GameGuidanceLable.active = false;
+                    this.scheduleOnce(() => this.GameGuidanceLable.active = false, 0.5);
                     this.gameState = GameState.COUNTDOWN;
                     this.timer = this.countdownTime;
                     this.countdownLable.node.active = true;
