@@ -1,4 +1,4 @@
-import { _decorator, Component, Label, math, Node } from 'cc';
+import { _decorator, Component,director, Label, math, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER}
@@ -69,7 +69,7 @@ export class GameManager extends Component {
                 if (this.timer <= 0) {
                     this.gameState = GameState.GAMEOVER;
                     this.gameTimerLable.string = "游戏结束";
-
+                    director.loadScene('03-GameOver-TimeOver');
                 }
                 break;
         }
