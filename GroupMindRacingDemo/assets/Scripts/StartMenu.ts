@@ -16,6 +16,7 @@ export class StartMenu extends Component {
         // 打开场景
         director.loadScene('02-GameScene');
     }
+    
 }
 
 

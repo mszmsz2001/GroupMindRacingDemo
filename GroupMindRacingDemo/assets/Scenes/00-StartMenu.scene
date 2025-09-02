@@ -184,7 +184,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 655.6555772994129,
+    "_orthoHeight": 563.9378238341968,
     "_near": 0,
     "_far": 2000,
     "_color": {
@@ -364,7 +364,7 @@
     "_string": "团体意念赛车",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 80,
+    "_actualFontSize": 96.5,
     "_fontSize": 80,
     "_fontFamily": "Arial",
     "_lineHeight": 100,
@@ -612,7 +612,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 180,
+      "width": 179.99585087435233,
       "height": 63
     },
     "_anchorPoint": {
@@ -645,7 +645,7 @@
     "_string": "开始游戏",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 45,
+    "_actualFontSize": 54.28125,
     "_fontSize": 45,
     "_fontFamily": "Arial",
     "_lineHeight": 50,
@@ -696,7 +696,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 199.99585087435233,
       "height": 77
     },
     "_anchorPoint": {

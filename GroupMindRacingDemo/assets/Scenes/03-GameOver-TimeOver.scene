@@ -11,7 +11,7 @@
   },
   {
     "__type__": "cc.Scene",
-    "_name": "03-GameOver",
+    "_name": "03-GameOver-TimeOver",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -822,8 +822,8 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "17a92Vh/wlEnLPub5EpxGdQ",
-    "handler": "",
+    "_componentId": "a420dhTsnxKTrAHcY0SmyvA",
+    "handler": "onAgainButtonClick",
     "customEventData": ""
   },
   {
@@ -1196,8 +1196,8 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "17a92Vh/wlEnLPub5EpxGdQ",
-    "handler": "",
+    "_componentId": "a420dhTsnxKTrAHcY0SmyvA",
+    "handler": "onExitClick",
     "customEventData": ""
   },
   {
@@ -1311,7 +1311,7 @@
     "_id": "3d4dGegJxForr7Jt+ltWup"
   },
   {
-    "__type__": "17a92Vh/wlEnLPub5EpxGdQ",
+    "__type__": "a420dhTsnxKTrAHcY0SmyvA",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -1320,7 +1320,7 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "_id": "82ZOa0gQRNZZNefwg20+5i"
+    "_id": "9fN0I4K+RFYp98yfWmtY/j"
   },
   {
     "__type__": "cc.PrefabInfo",
