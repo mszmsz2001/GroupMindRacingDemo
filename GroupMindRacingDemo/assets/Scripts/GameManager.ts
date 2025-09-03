@@ -29,7 +29,8 @@ export class GameManager extends Component {
     gameDuration: number = 30; // 游戏总时长
 
     private gameState: GameState = GameState.WAITING;
-    private timer: number = 0;
+    private timer: number = 0;    
+    private hasFinished: boolean = false;
 
     start() {
         this.timer = this.startDelay;
@@ -41,8 +42,17 @@ export class GameManager extends Component {
 
     update(deltaTime: number) {
         this.timer -= deltaTime;
+
+        if (this.hasFinished) {
+            // 游戏已经结束
+            return;
+        }
+        this.switchGameState();
         
-        // 选择游戏状态
+    }
+
+    // 选择游戏状态
+    switchGameState() {
         switch (this.gameState) {
             case GameState.WAITING:
                 // 更新引导面板标签
@@ -79,11 +89,11 @@ export class GameManager extends Component {
                 break;
             case GameState.GAMEOVER:
                 this.gameTimerLabel.string = "游戏结束";
-                this.PlayerController.onRaceEnd();
+                this.PlayerController.onRaceEnd();                    
+                this.hasFinished = true;
                 //director.loadScene('03-GameOver-TimeOver');
                 break;
         }
-        
     }
 }
 

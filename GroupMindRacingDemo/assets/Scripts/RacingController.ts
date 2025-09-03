@@ -17,12 +17,17 @@ export class RacingController extends Component {
     audioSource: AudioSource = null; // 声音播放组件
 
     private canMove: boolean = false;
-    private hasFinished: boolean = false;
     private isSoundPlaying: boolean = false;    
 
     // 添加赛道移动速度属性
     @property({ type: Number, tooltip: "赛道移动速度" })
     trackSpeed: number = 100;
+    // 基础速度（按压开始时的速度）
+    private baseSpeed: number = 100;    
+    // 最大速度限制
+    maxSpeed: number = 200;
+    // 加速度（每秒增加的速度）
+    acceleration: number = 0;
 
     start() {
         const uiTransform = this.node.getComponent(UITransform);
@@ -50,8 +55,14 @@ export class RacingController extends Component {
             console.warn("GameMode 脚本没有关联 ScrollingBackground 组件！");
         }
 
+       // 让赛道移动
         if (this.canMove) {
-            // 让赛道移动
+
+            // 计算加速度
+            const addedSpeed = this.acceleration * deltaTime;
+            // 计算新速度（不超过最大值）
+            const newSpeed = this.trackSpeed + addedSpeed;
+            this.trackSpeed = Math.min(newSpeed, this.maxSpeed);
             this.scrollingBackground.bgSpeed = this.trackSpeed;
         } else {
             this.scrollingBackground.bgSpeed = 0;
@@ -90,8 +101,13 @@ export class RacingController extends Component {
 
     // 命令：比赛结束！
     public onRaceEnd() {
-        this.canMove = false;
-        
+        // 等待几秒恒定加速度减速至0
+        this.acceleration = -50;
+        console.log("减速时间：" + this.trackSpeed / this.acceleration);
+        this.scheduleOnce(() => {
+            this.acceleration = 0;
+            this.canMove = false;
+        }, Math.abs(this.trackSpeed / this.acceleration));
     }
 
 }
