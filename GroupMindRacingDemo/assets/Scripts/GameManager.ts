@@ -1,4 +1,5 @@
-import { _decorator, Component,director, Label, math, Node } from 'cc';
+import { _decorator, BaseRenderData, Component,director, Label, math, Node } from 'cc';
+import { RacingController } from './RacingController';
 const { ccclass, property } = _decorator;
 
 enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER}
@@ -6,14 +7,17 @@ enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER}
 @ccclass('GameManager')
 export class GameManager extends Component {
 
+    // 脚本
+    @property({ type: RacingController, tooltip: "游戏模式控制节点" })
+    PlayerController: RacingController = null;
+
+    // UI
     @property(Node)
-    GameGuidanceLable: Node = null;
-
+    gameGuidanceLabel: Node = null;
     @property(Label)
-    countdownLable: Label = null;
-
+    countdownLabel: Label = null;
     @property(Label)
-    gameTimerLable: Label = null;
+    gameTimerLabel: Label = null;
 
     @property
     startDelay: number = 10; // 游戏开始前等待秒数
@@ -29,10 +33,10 @@ export class GameManager extends Component {
 
     start() {
         this.timer = this.startDelay;
-        this.GameGuidanceLable.active = true;
-        this.countdownLable.node.active = false;
+        this.gameGuidanceLabel.active = true;
+        this.countdownLabel.node.active = false;
         // console.log("进入游戏倒计时状态："+this.countdownLable.node.active);
-        this.gameTimerLable.node.active = false;
+        this.gameTimerLabel.node.active = false;
     }
 
     update(deltaTime: number) {
@@ -42,35 +46,41 @@ export class GameManager extends Component {
         switch (this.gameState) {
             case GameState.WAITING:
                 // 更新引导面板标签
-                this.GameGuidanceLable.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer).toString() + '秒后开始';
+                this.gameGuidanceLabel.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer).toString() + '秒后开始';
+                this.PlayerController.onWaitingStart();
 
                 if (this.timer <= 0) {
-                    this.scheduleOnce(() => this.GameGuidanceLable.active = false, 0.5);
+                    this.scheduleOnce(() => this.gameGuidanceLabel.active = false, 0.5);
                     this.gameState = GameState.COUNTDOWN;
                     this.timer = this.countdownTime;
-                    this.countdownLable.node.active = true;
+                    this.countdownLabel.node.active = true;
                 }
                 break;
 
             case GameState.COUNTDOWN:
-                this.countdownLable.string = Math.ceil(this.timer).toString(); // 更新游戏开始倒计时标签, timer取整
+                this.countdownLabel.string = Math.ceil(this.timer).toString(); // 更新游戏开始倒计时标签, timer取整
+                this.PlayerController.onCountdownStart();
                 if (this.timer <= 0) {
-                    this.countdownLable.string = "Go!";
+                    this.countdownLabel.string = "Go!";
                     this.gameState = GameState.PLAYING;
                     this.timer = this.gameDuration;
-                    this.gameTimerLable.node.active = true;
+                    this.gameTimerLabel.node.active = true;
                     // 0.5秒后隐藏倒计时Label
-                    this.scheduleOnce(() => this.countdownLable.node.active = false, 0.5);
+                    this.scheduleOnce(() => this.countdownLabel.node.active = false, 0.5);
                 }
                 break;
 
             case GameState.PLAYING:
-                this.gameTimerLable.string = `剩余时间：${Math.ceil(this.timer)}` // 更新游戏计时标签
+                this.gameTimerLabel.string = `剩余时间：${Math.ceil(this.timer)}` // 更新游戏计时标签
+                this.PlayerController.onRaceStart();
                 if (this.timer <= 0) {
                     this.gameState = GameState.GAMEOVER;
-                    this.gameTimerLable.string = "游戏结束";
-                    director.loadScene('03-GameOver-TimeOver');
                 }
+                break;
+            case GameState.GAMEOVER:
+                this.gameTimerLabel.string = "游戏结束";
+                this.PlayerController.onRaceEnd();
+                //director.loadScene('03-GameOver-TimeOver');
                 break;
         }
         
