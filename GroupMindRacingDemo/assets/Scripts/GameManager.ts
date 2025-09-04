@@ -1,4 +1,4 @@
-import { _decorator, BaseRenderData, Component,director, Label, math, Node } from 'cc';
+import { _decorator, BaseRenderData, Component,director, Label, labelAssembler, math, Node } from 'cc';
 import { RacingController } from './RacingController';
 const { ccclass, property } = _decorator;
 
@@ -18,6 +18,8 @@ export class GameManager extends Component {
     countdownLabel: Label = null;
     @property(Label)
     gameTimerLabel: Label = null;
+    @property(Label)
+    mileageLabel: Label = null;
 
     @property
     startDelay: number = 10; // 游戏开始前等待秒数
@@ -47,6 +49,8 @@ export class GameManager extends Component {
             // 游戏已经结束
             return;
         }
+        // 更新里程标签
+        this.mileageLabel.string = `里程：${Math.floor(this.PlayerController.raceMileage/100)}`;
         this.switchGameState();
         
     }

@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, AudioSource, Component, Node, UITransform, view } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, Label, Node, UITransform, view } from 'cc';
 import { ScrollingBackground } from './ScrollingBackground';
 const { ccclass, property } = _decorator;
 
@@ -22,6 +22,8 @@ export class RacingController extends Component {
     // 添加赛道移动速度属性
     @property({ type: Number, tooltip: "赛道移动速度" })
     trackSpeed: number = 100;
+    // 比赛里程显示，单位：像素
+    raceMileage: number = 0;
     // 基础速度（按压开始时的速度）
     private baseSpeed: number = 100;    
     // 最大速度限制
@@ -39,6 +41,7 @@ export class RacingController extends Component {
 
         // 设置赛道根节点位置
         this.node.setPosition(this.node.x, canvasBottomY);
+
 
         // 检查是否已经关联了子脚本
         if (this.scrollingBackground) {
@@ -64,6 +67,8 @@ export class RacingController extends Component {
             const newSpeed = this.trackSpeed + addedSpeed;
             this.trackSpeed = Math.min(newSpeed, this.maxSpeed);
             this.scrollingBackground.bgSpeed = this.trackSpeed;
+
+            this.raceMileage += this.trackSpeed * deltaTime;
         } else {
             this.scrollingBackground.bgSpeed = 0;
         }
