@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, AudioSource, Component, Label, Node, UITransform, view } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, Label, math, Node, UITransform, view } from 'cc';
 import { ScrollingBackground } from './ScrollingBackground';
 const { ccclass, property } = _decorator;
 
@@ -17,7 +17,7 @@ export class RacingController extends Component {
     audioSource: AudioSource = null; // 声音播放组件
 
     private canMove: boolean = false;
-    private isSoundPlaying: boolean = false;    
+    private isSoundPlaying: boolean = false;
 
     // 添加赛道移动速度属性
     @property({ type: Number, tooltip: "赛道移动速度" })
@@ -27,7 +27,7 @@ export class RacingController extends Component {
     // 基础速度（按压开始时的速度）
     private baseSpeed: number = 100;    
     // 最大速度限制
-    maxSpeed: number = 200;
+    maxSpeed: number = 500;
     // 加速度（每秒增加的速度）
     acceleration: number = 0;
 
@@ -42,6 +42,8 @@ export class RacingController extends Component {
         // 设置赛道根节点位置
         this.node.setPosition(this.node.x, canvasBottomY);
 
+        // 设置赛道初速度
+        this.setSpeed(0);
 
         // 检查是否已经关联了子脚本
         if (this.scrollingBackground) {
@@ -65,9 +67,9 @@ export class RacingController extends Component {
             const addedSpeed = this.acceleration * deltaTime;
             // 计算新速度（不超过最大值）
             const newSpeed = this.trackSpeed + addedSpeed;
-            this.trackSpeed = Math.min(newSpeed, this.maxSpeed);
-            this.scrollingBackground.bgSpeed = this.trackSpeed;
+            this.setSpeed(newSpeed);
 
+            // 更新赛道里程
             this.raceMileage += this.trackSpeed * deltaTime;
         } else {
             this.scrollingBackground.bgSpeed = 0;
@@ -75,7 +77,7 @@ export class RacingController extends Component {
 
     }
 
-    //---以下是供 GameManager 调用的公共命令---
+    //---以下是供 GameManager 调用的公共命令---//
 
     // 命令：等待开始！
     public onWaitingStart() {
@@ -97,6 +99,7 @@ export class RacingController extends Component {
     // 命令：比赛开始！
     public onRaceStart() {
         this.canMove = true;
+        this.speedUp(); // 开始加速
         // 停止播放引擎声
         if (this.audioSource && this.isSoundPlaying) {
             this.audioSource.stop();
@@ -107,13 +110,33 @@ export class RacingController extends Component {
     // 命令：比赛结束！
     public onRaceEnd() {
         // 等待几秒恒定加速度减速至0
-        this.acceleration = -50;
-        console.log("减速时间：" + this.trackSpeed / this.acceleration);
+        this.speedDown();
         this.scheduleOnce(() => {
             this.acceleration = 0;
             this.canMove = false;
         }, Math.abs(this.trackSpeed / this.acceleration));
     }
+
+    //---以上是供 GameManager 调用的公共命令---//
+
+    //---以下是 加速、减速 命令---//
+    // 加速
+    speedUp() {
+        this.acceleration = 100; // 每秒增加100像素/秒的速度
+    }
+
+    // 减速
+    speedDown() {
+        this.acceleration = -200; // 每秒减少50像素/秒的速度
+    }
+
+    // 设置速度
+    public setSpeed(newSpeed: number) {
+        // 将速度限制在某个区间内，比如 0 到 this.maxSpeed
+        this.trackSpeed = math.clamp(newSpeed, 0, this.maxSpeed);
+        this.scrollingBackground.bgSpeed = this.trackSpeed;
+    }
+    // 计算速度
 
 }
 
