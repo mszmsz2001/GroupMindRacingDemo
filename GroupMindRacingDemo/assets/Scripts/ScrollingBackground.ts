@@ -36,6 +36,9 @@ export class ScrollingBackground extends Component {
         // this.canvasBottomY = -visibleHeight / 2; // 计算画布底部的Y坐标
         */
 
+        // 设置父节点坐标
+        this.node.setPosition(0, this.canvasBottomY);
+
         // 设置初始位置,防止摆放错误
         this.bg05.setPosition(0, this.canvasBottomY + this.bgHeight/2);
         this.bg00.setPosition(0, this.canvasBottomY + this.bgHeight + this.bgHeight/2);

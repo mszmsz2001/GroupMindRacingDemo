@@ -52,13 +52,13 @@ export class SpeedUp extends Component {
             const newSpeed = this.baseSpeed + addedSpeed;
             this.trackSpeed = Math.min(newSpeed, this.maxSpeed);
         } else if (this.trackSpeed > this.baseSpeed) {
-        // 松开后减速（直到达到最低速度）
-        this.trackSpeed -= this.acceleration * deltaTime;
-        // 确保不会低于最低速度
-        this.trackSpeed = Math.max(this.trackSpeed, this.baseSpeed);
-    }
+            // 松开后减速（直到达到最低速度）
+            this.trackSpeed -= this.acceleration * deltaTime;
+            // 确保不会低于最低速度
+            this.trackSpeed = Math.max(this.trackSpeed, this.baseSpeed);
+        }
 
-                // 检查是否已经关联了子脚本
+        // 检查是否已经关联了子脚本
         if (this.scrollingBackground) {
             // 将本组件上设置的 trackSpeed 值，赋给子组件的 bgSpeed 变量
             this.scrollingBackground.bgSpeed = this.trackSpeed;
