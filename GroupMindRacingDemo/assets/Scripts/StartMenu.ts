@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Node } from 'cc';
+import { _decorator, Component, director, Node, sys, game } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('StartMenu')
@@ -17,6 +17,9 @@ export class StartMenu extends Component {
         director.loadScene('02-GameScene');
     }
     
+    onExitButtonClick() {
+    
+    }
 }
 
 
