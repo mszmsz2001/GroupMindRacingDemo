@@ -1,10 +1,10 @@
-import { _decorator, Component, Node, UITransform, view } from 'cc';
+import { _decorator, Component, math, Node, sp, Sprite, SpriteFrame, UITransform, view } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('ScrollingBackground')
 export class ScrollingBackground extends Component {
 
-    // 添加背景属性面板
+    // 添加赛道背景属性面板
     @property(Node)     // bg00是起始与终点背景
     bg00: Node = null;
     @property(Node)     // bg01-bg04是循环滚动背景
@@ -17,6 +17,12 @@ export class ScrollingBackground extends Component {
     bg04: Node = null;
     @property(Node)
     bg05: Node = null;
+
+    // 添加周围景色节点
+    @property(Node)
+    sceneryObject: Node = null;
+    @property([SpriteFrame])
+    scenerySprites: SpriteFrame[] = []; // 拖入所有树木、房子的图片
 
     // 不再需要 @property，因为它将由父节点控制
     // 但它仍然是一个 public 变量，外部可以访问和修改
@@ -47,6 +53,10 @@ export class ScrollingBackground extends Component {
         this.bg03.setPosition(0, this.canvasBottomY + this.bgHeight*4 + this.bgHeight/2);
         this.bg04.setPosition(0, this.canvasBottomY + this.bgHeight*5 + this.bgHeight/2);
 
+        // 初始化周围景色
+        this.sceneryObject.active = false;
+        this.spawnScenery();
+
     }
 
     update(deltaTime: number) {
@@ -66,6 +76,8 @@ export class ScrollingBackground extends Component {
         this.bg03.setPosition(position3.x, position3.y - distance);
         this.bg04.setPosition(position4.x, position4.y - distance);
         this.bg05.setPosition(position5.x, position5.y - distance);
+
+        this.sceneryObject.setPosition(this.sceneryObject.position.x, this.sceneryObject.position.y - distance);
 
         // 不用上面的position是因为会有一帧的差值
         let p0 = this.bg00.position;
@@ -88,6 +100,26 @@ export class ScrollingBackground extends Component {
             this.bg04.setPosition(p4.x, p4.y + this.bgHeight*4);
         }
 
+        if (this.sceneryObject.position.y + 100 < this.canvasBottomY) {
+            this.spawnScenery();
+        }
+
+    }
+
+    spawnScenery() {
+        if (this.scenerySprites.length === 0) return;
+        
+        // 生成周围景色
+        this.sceneryObject.active = true;
+
+        // 随机选择一个图片
+        const randomIndex = math.randomRangeInt(0, this.scenerySprites.length);
+        const randomSprite = this.scenerySprites[randomIndex];
+        // 设置节点的 Sprite 组件为随机选择的图片
+        this.sceneryObject.getComponent(Sprite).spriteFrame = randomSprite;
+        const sceneHalfWidth = this.sceneryObject.getComponent(UITransform).width / 2;
+        const xpos = math.random() < 0.5 ? -150 - sceneHalfWidth : 150 + sceneHalfWidth;
+        this.sceneryObject.setPosition(xpos, this.canvasBottomY + 600);
     }
 }
 
