@@ -187,7 +187,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 765.2910052910053,
+    "_orthoHeight": 563.9378238341968,
     "_near": 0,
     "_far": 2000,
     "_color": {
@@ -401,8 +401,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 498,
-      "height": 191
+      "width": 497.98344397668393,
+      "height": 191.00000000000003
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -434,7 +434,7 @@
     "_string": "游戏指导",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 124,
+    "_actualFontSize": 149.57500000000002,
     "_fontSize": 124,
     "_fontFamily": "Arial",
     "_lineHeight": 150,
@@ -569,7 +569,7 @@
     "_string": "这是一个团体竞争游戏，请用之前学习到的放松方法，尽可能的保持自身放松，并将注意力轻轻地放在赛车的驾驶上。\n\n当整个小组的身体越放松、注意力越专注在驾驶赛车上时，赛车会加速行驶，最快抵达终点！\n\n让我们开动团体的力量，帮助我们的赛车跑得更远吧！",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 48,
+    "_actualFontSize": 58,
     "_fontSize": 64,
     "_fontFamily": "Arial",
     "_lineHeight": 96,
@@ -698,7 +698,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 447.478619930873,
+      "width": 447.4223840986191,
       "height": 75.6
     },
     "_anchorPoint": {
@@ -731,7 +731,7 @@
     "_string": "10秒后开始......",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 64,
+    "_actualFontSize": 77.2,
     "_fontSize": 64,
     "_fontFamily": "Arial",
     "_lineHeight": 60,
@@ -921,7 +921,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 196.63980848213274,
+      "width": 196.63980595217805,
       "height": 318.48
     },
     "_anchorPoint": {
@@ -954,7 +954,7 @@
     "_string": "3",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 248,
+    "_actualFontSize": 299.15000000000003,
     "_fontSize": 248,
     "_fontFamily": "Arial",
     "_lineHeight": 248,
@@ -1053,8 +1053,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1028,
-      "height": 193
+      "width": 1027.9336747085492,
+      "height": 192.99999999999997
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1086,7 +1086,7 @@
     "_string": "比赛开始倒计时！",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 128,
+    "_actualFontSize": 154.4,
     "_fontSize": 128,
     "_fontFamily": "Arial",
     "_lineHeight": 150,
@@ -1325,7 +1325,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 75.123046875,
+      "width": 75.10828458954016,
       "height": 54.4
     },
     "_anchorPoint": {
@@ -1358,7 +1358,7 @@
     "_string": "里程：0",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 24.125,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1508,7 +1508,7 @@
         "__id__": 51
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 54
@@ -2284,7 +2284,7 @@
         "__id__": 57
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 60
@@ -2560,7 +2560,7 @@
         "__id__": 66
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 69
@@ -2668,7 +2668,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 90,
+      "width": 89.99792543717616,
       "height": 63
     },
     "_anchorPoint": {
@@ -2701,7 +2701,7 @@
     "_string": "加速",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 45,
+    "_actualFontSize": 54.28125,
     "_fontSize": 45,
     "_fontFamily": "Arial",
     "_lineHeight": 50,
@@ -2752,7 +2752,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 110,
+      "width": 109.99792543717616,
       "height": 77
     },
     "_anchorPoint": {
@@ -2907,9 +2907,7 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "scrollingBackground": {
-      "__id__": 55
-    },
+    "RacingController": null,
     "_id": "2a6Wk56qFMkIffSwAEZ2t/"
   },
   {
