@@ -29,7 +29,7 @@ export class RacingController extends Component {
     // 最大速度限制
     maxSpeed: number = 500;
     // 加速度（每秒增加的速度）
-    public acceleration: number = 0;
+    acceleration: number = 0;
 
     start() {
         const uiTransform = this.node.getComponent(UITransform);

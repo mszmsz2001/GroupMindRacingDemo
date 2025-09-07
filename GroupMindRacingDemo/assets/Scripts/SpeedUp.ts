@@ -1,14 +1,22 @@
 import { _decorator, Component, Node, UITransform, view , Input, EventTouch, Vec2 } from 'cc';
-import { RacingController } from './RacingController';
+import { ScrollingBackground } from './ScrollingBackground';
 const { ccclass, property} = _decorator;
 
 @ccclass('SpeedUp')
 export class SpeedUp extends Component {
-    @property({ type: RacingController, tooltip: "比赛控制节点" })
-    RacingController: RacingController = null;
+    @property({ type: ScrollingBackground, tooltip: "背景滚动控制节点" })
+    scrollingBackground: ScrollingBackground = null;
+
+    trackSpeed: number = 100;
+    
+    // 基础速度（按压开始时的速度）
+    private baseSpeed: number = 100;
+    
+    // 最大速度限制
+    maxSpeed: number = 500;
     
     // 加速度（每秒增加的速度）
-    acceleration: number = 0;
+    acceleration: number = 100;
     
     // 是否正在按压
     private isPressing: boolean = false;
@@ -17,6 +25,8 @@ export class SpeedUp extends Component {
     private pressStartTime: number = 0;
 
     protected onLoad(): void {
+        // 初始化基础速度
+        this.baseSpeed = this.trackSpeed;
         
         // 监听触摸/鼠标事件
         this.node.on(Input.EventType.TOUCH_START, this.onPressStart, this);
@@ -31,24 +41,45 @@ export class SpeedUp extends Component {
 
     update(deltaTime: number) {
         // 如果正在按压，计算当前速度
-        
+        if (this.isPressing) {
+            // 计算按压持续时间
+            const pressDuration = performance.now() - this.pressStartTime;
+            
+            // 计算增加的速度（转换为秒）
+            const addedSpeed = (pressDuration / 1000) * this.acceleration;
+            
+            // 计算新速度（不超过最大值）
+            const newSpeed = this.baseSpeed + addedSpeed;
+            this.trackSpeed = Math.min(newSpeed, this.maxSpeed);
+        } else if (this.trackSpeed > this.baseSpeed) {
+            // 松开后减速（直到达到最低速度）
+            this.trackSpeed -= this.acceleration * deltaTime;
+            // 确保不会低于最低速度
+            this.trackSpeed = Math.max(this.trackSpeed, this.baseSpeed);
+        }
+
+        // 检查是否已经关联了子脚本
+        if (this.scrollingBackground) {
+            // 将本组件上设置的 trackSpeed 值，赋给子组件的 bgSpeed 变量
+            this.scrollingBackground.bgSpeed = this.trackSpeed;
+        } else {
+            console.warn("GameViewSetup 脚本没有关联 ScrollingBackground 组件！");
+        }
+
     }
+
 
     // 按压开始
     private onPressStart(event: EventTouch | MouseEvent): void {
         this.isPressing = true;
-        // 设置加速度
-        this.acceleration = 100; // 每秒增加100像素/秒的速度  
-        this.RacingController.acceleration = this.acceleration;
-        console.log("speed up：" + this.RacingController.acceleration);
         this.pressStartTime = performance.now();
+        // 记录按压开始时的速度作为基础速度
+        this.baseSpeed = this.trackSpeed;
     }
 
     // 按压结束
     private onPressEnd(event: EventTouch | MouseEvent): void {
         this.isPressing = false;
-        this.acceleration = -50; // 每秒减少50像素/秒的速度
-        this.RacingController.acceleration = this.acceleration;
         // 可以在这里添加松开后的逻辑，比如保持当前速度或逐渐减速
         // 示例：保持当前速度（不重置）
     }
