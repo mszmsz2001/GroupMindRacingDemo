@@ -16,6 +16,10 @@ export class RacingController extends Component {
     @property(AudioSource)
     audioSource: AudioSource = null; // 声音播放组件
 
+    // UI里程显示
+    @property(Label)
+    mileageLabel: Label = null;
+
     private canMove: boolean = false;
     private isSoundPlaying: boolean = false;
 
@@ -29,7 +33,7 @@ export class RacingController extends Component {
     // 最大速度限制
     maxSpeed: number = 500;
     // 加速度（每秒增加的速度）
-    acceleration: number = 0;
+    public acceleration: number = 0;
 
     start() {
         const uiTransform = this.node.getComponent(UITransform);
@@ -74,6 +78,10 @@ export class RacingController extends Component {
         } else {
             this.scrollingBackground.bgSpeed = 0;
         }
+
+        // 更新里程UI显示
+        this.mileageLabel.string = `里程：${Math.floor(this.raceMileage/100)}`;
+        console.log(`里程：${Math.floor(this.raceMileage/100)}`);
 
     }
 
