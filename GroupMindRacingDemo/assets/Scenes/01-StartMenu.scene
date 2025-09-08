@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.SceneAsset",
-    "_name": "00-StartMenu",
+    "_name": "01-StartMenu",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
