@@ -19,10 +19,13 @@ export class ScrollingBackground extends Component {
     bg05: Node = null;
 
     // 添加周围景色节点
-    @property(Node)
+    @property({ type: Node, tooltip: "赛道移动速度" })
     sceneryObject: Node = null;
     @property([SpriteFrame])
     scenerySprites: SpriteFrame[] = []; // 拖入所有树木、房子的图片
+
+    @property({ type: Number, tooltip: "周围景色的起始生成Y坐标" })
+    spawnSceneryPosY: number = 1000; // 生成周围景色的Y坐标
 
     // 不再需要 @property，因为它将由父节点控制
     // 但它仍然是一个 public 变量，外部可以访问和修改
@@ -117,9 +120,15 @@ export class ScrollingBackground extends Component {
         const randomSprite = this.scenerySprites[randomIndex];
         // 设置节点的 Sprite 组件为随机选择的图片
         this.sceneryObject.getComponent(Sprite).spriteFrame = randomSprite;
-        const sceneHalfWidth = this.sceneryObject.getComponent(UITransform).width / 2;
+        const currentScale_X = this.sceneryObject.scale.x;
+        const currentScale_Y = this.sceneryObject.scale.y;
+        // 计算节点的半宽高（考虑缩放）
+        const sceneHalfWidth = this.sceneryObject.getComponent(UITransform).width / 2 * currentScale_X;
+        const sceneHalfHeight = this.sceneryObject.getComponent(UITransform).height / 2 * currentScale_Y;
+        // 随机决定生成在左侧还是右侧
         const xpos = math.random() < 0.5 ? -150 - sceneHalfWidth : 150 + sceneHalfWidth;
-        this.sceneryObject.setPosition(xpos, this.canvasBottomY + 600);
+        const ypos = this.canvasBottomY + this.spawnSceneryPosY + sceneHalfHeight;
+        this.sceneryObject.setPosition(xpos, ypos);
     }
 }
 

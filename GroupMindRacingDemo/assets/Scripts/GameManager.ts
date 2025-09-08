@@ -8,8 +8,8 @@ enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER}
 export class GameManager extends Component {
 
     // 脚本
-    @property({ type: RacingController, tooltip: "游戏模式控制节点" })
-    PlayerController: RacingController = null;
+    @property({ type: [RacingController], tooltip: "游戏模式控制节点" })
+    Players: RacingController[] = [];
 
     // UI
     @property(Node)
@@ -50,7 +50,9 @@ export class GameManager extends Component {
             return;
         }
         // 更新里程标签
-        this.mileageLabel.string = `里程：${Math.floor(this.PlayerController.raceMileage/100)}`;
+        this.Players.forEach(player => {
+            this.mileageLabel.string = `里程：${Math.floor(player.raceMileage/100)}`;
+        });
         this.switchGameState();
         
     }
@@ -61,7 +63,7 @@ export class GameManager extends Component {
             case GameState.WAITING:
                 // 更新引导面板标签
                 this.gameGuidanceLabel.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer).toString() + '秒后开始';
-                this.PlayerController.onWaitingStart();
+                this.Players.forEach(player => player.onWaitingStart()); // 通知所有玩家进入等待状态
 
                 if (this.timer <= 0) {
                     this.scheduleOnce(() => this.gameGuidanceLabel.active = false, 0.5);
@@ -73,7 +75,7 @@ export class GameManager extends Component {
 
             case GameState.COUNTDOWN:
                 this.countdownLabel.string = Math.ceil(this.timer).toString(); // 更新游戏开始倒计时标签, timer取整
-                this.PlayerController.onCountdownStart();
+                this.Players.forEach(player => player.onCountdownStart()); // 通知所有玩家进入倒计时状态
                 if (this.timer <= 0) {
                     this.countdownLabel.string = "Go!";
                     this.gameState = GameState.PLAYING;
@@ -86,14 +88,14 @@ export class GameManager extends Component {
 
             case GameState.PLAYING:
                 this.gameTimerLabel.string = `剩余时间：${Math.ceil(this.timer)}` // 更新游戏计时标签
-                this.PlayerController.onRaceStart();
+                this.Players.forEach(player => player.onRaceStart());
                 if (this.timer <= 0) {
                     this.gameState = GameState.GAMEOVER;
                 }
                 break;
             case GameState.GAMEOVER:
                 this.gameTimerLabel.string = "游戏结束";
-                this.PlayerController.onRaceEnd();                    
+                this.Players.forEach(player => player.onRaceEnd());
                 this.hasFinished = true;
                 //director.loadScene('03-GameOver-TimeOver');
                 break;
