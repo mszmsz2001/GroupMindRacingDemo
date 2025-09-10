@@ -1,5 +1,6 @@
-import { _decorator, AudioClip, AudioSource, Component, Label, math, Node, UITransform, view } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, Label, math, Node, UITransform, view,director ,find, Scene} from 'cc';
 import { ScrollingBackground } from './ScrollingBackground';
+import { GlobalDataManager } from './GlobalDataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('RacingController')
@@ -27,7 +28,7 @@ export class RacingController extends Component {
     @property({ type: Number, tooltip: "赛道移动速度" })
     trackSpeed: number = 100;
     // 比赛里程显示，单位：像素
-    raceMileage: number = 0;
+    public raceMileage: number = 0;
     // 基础速度（按压开始时的速度）
     private baseSpeed: number = 100;    
     // 最大速度限制
@@ -123,6 +124,7 @@ export class RacingController extends Component {
             this.acceleration = 0;
             this.canMove = false;
         }, Math.abs(this.trackSpeed / this.acceleration));
+        this.collectAllMileages();
     }
 
     //---以上是供 GameManager 调用的公共命令---//
@@ -146,6 +148,51 @@ export class RacingController extends Component {
     }
     // 计算速度
 
+    // 收集所有四辆车的里程并保存
+    private collectAllMileages() {
+        const allMileages = [];
+        const targetNames = ['RacingTrack-001', 'RacingTrack-002', 'RacingTrack-003', 'RacingTrack-004'];
+        
+        // 找到Canvas节点（四辆赛车的父节点）
+        const canvasNode = find('Canvas');
+        if (!canvasNode) {
+            console.error("未找到Canvas节点！");
+            return;
+        }
+        console.log(`已找到Canvas节点，子节点数量: ${canvasNode.children.length}`);
+
+        // 遍历目标名称列表，从Canvas的子节点中查找
+        targetNames.forEach(targetName => {
+            // 在Canvas的子节点中查找目标节点
+            const targetNode = canvasNode.getChildByName(targetName);
+            
+            if (!targetNode) {
+                console.error(`在Canvas下未找到${targetName}`);
+                return;
+            }
+
+            // 获取节点上的RaceController组件
+            const targetController = targetNode.getComponent(RacingController);
+            if (!targetController) {
+                console.error(`${targetName}上未挂载RaceController组件`);
+                return;
+            }
+
+            // 添加里程数据
+            allMileages.push({
+                racemileage: Math.floor(targetController.raceMileage)
+            });
+            console.log(`已收集${targetName}的里程: ${targetController.raceMileage}`);
+        });
+
+        console.log(`共收集到${allMileages.length}/4个玩家里程数据`);
+        GlobalDataManager.getInstance().setPlayerDatas(allMileages);
+        // 切换到游戏结束场景
+        director.loadScene("03-GameOver-TimeOver");
+    }
+
+
 }
 
 
+ 
