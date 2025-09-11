@@ -1,8 +1,10 @@
 import { _decorator, Component,director, Label, labelAssembler, math, Node } from 'cc';
 import { RacingController } from './RacingController';
+import { GameOver } from './GameOver';
 const { ccclass, property } = _decorator;
 
-enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER}
+// 游戏状态枚举(等待、倒计时、游戏中、游戏结束、切换)
+enum GameState {WAITING, COUNTDOWN, PLAYING, GAMEOVER, TRANSITIONING}
 
 @ccclass('GameManager')
 export class GameManager extends Component {
@@ -34,7 +36,7 @@ export class GameManager extends Component {
 
     start() {
         this.timer = this.startDelay;
-        this.gameGuidanceLabel.active = true;
+        this.gameGuidanceLabel.active = false;
         this.countdownLabel.node.active = false;
         // console.log("进入游戏倒计时状态："+this.countdownLable.node.active);
         this.gameTimerLabel.node.active = false;
@@ -60,26 +62,38 @@ export class GameManager extends Component {
             case GameState.WAITING:
                 // 更新引导面板标签
                 this.gameGuidanceLabel.getChildByName("Countdown").getComponent(Label).string = Math.ceil(this.timer).toString() + '秒后开始';
+                this.gameGuidanceLabel.active = true;
 
                 if (this.timer <= 0) {
-                    this.scheduleOnce(() => this.gameGuidanceLabel.active = false, 0.5);
-                    this.gameState = GameState.COUNTDOWN;
                     this.Players.forEach(player => player.onCountdownStart()); // 通知所有玩家进入倒计时状态
-                    this.timer = this.countdownTime;
-                    this.countdownLabel.node.active = true;
-                }
+                    this.gameGuidanceLabel.active = false;
+                    this.scheduleOnce(() => {
+                        this.gameState = GameState.COUNTDOWN;
+                        this.timer = this.countdownTime;
+                        this.countdownLabel.node.active = true;
+                    }, 1);
+
+                    // 先设置为游戏结束，防止多次进入
+                    this.gameState = GameState.TRANSITIONING;
+                } 
                 break;
 
             case GameState.COUNTDOWN:
                 this.countdownLabel.string = Math.ceil(this.timer).toString(); // 更新游戏开始倒计时标签, timer取整
                 if (this.timer <= 0) {
                     this.countdownLabel.string = "Go!";
-                    this.gameState = GameState.PLAYING;
-                    this.Players.forEach(player => player.onRaceStart()); // 通知所有玩家进入比赛状态
-                    this.timer = this.gameDuration;
-                    this.gameTimerLabel.node.active = true;
                     // 0.5秒后隐藏倒计时Label
                     this.scheduleOnce(() => this.countdownLabel.node.active = false, 0.5);
+                    // 提前显示游戏计时标签                  
+                    this.gameTimerLabel.node.active = true;
+                    this.Players.forEach(player => player.onRaceStart()); // 通知所有玩家进入比赛状态
+                    this.scheduleOnce(() => {
+                        this.gameState = GameState.PLAYING;
+                        this.timer = this.gameDuration;
+                    }, 1);
+
+                    // 先设置为游戏结束，防止多次进入
+                    this.gameState = GameState.TRANSITIONING;
                 }
                 break;
 
@@ -92,9 +106,10 @@ export class GameManager extends Component {
                 }
                 break;
             case GameState.GAMEOVER:
-                this.gameTimerLabel.string = "游戏结束";
+                this.gameTimerLabel.string = "游戏结束，正在结算中...";
                 this.hasFinished = true;
-                //director.loadScene('03-GameOver-TimeOver');
+                // 切换到游戏结束场景
+                this.scheduleOnce(() => {director.loadScene("03-GameOver-TimeOver")}, 5);
                 break;
         }
     }

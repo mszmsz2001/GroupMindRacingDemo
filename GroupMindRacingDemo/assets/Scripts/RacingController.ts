@@ -187,10 +187,7 @@ export class RacingController extends Component {
 
         console.log(`共收集到${allMileages.length}/4个玩家里程数据`);
         GlobalDataManager.getInstance().setPlayerDatas(allMileages);
-        // 切换到游戏结束场景
-        director.loadScene("03-GameOver-TimeOver");
     }
-
 
 }
 
