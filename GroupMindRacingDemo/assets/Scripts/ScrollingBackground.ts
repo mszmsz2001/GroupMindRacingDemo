@@ -33,8 +33,8 @@ export class ScrollingBackground extends Component {
 
     // 背景高度
     private bgHeight: number = 0;
-    // 记录初始位置
-    private canvasBottomY: number = 0;
+    // 修正背景拼接图Y坐标位置
+    private fixCanvasBottomY: number = -450;
 
     start() {
         // 记录初始位置
@@ -45,16 +45,13 @@ export class ScrollingBackground extends Component {
         // this.canvasBottomY = -visibleHeight / 2; // 计算画布底部的Y坐标
         */
 
-        // 设置父节点坐标
-        this.node.setPosition(0, this.canvasBottomY);
-
         // 设置初始位置,防止摆放错误
-        this.bg05.setPosition(0, this.canvasBottomY + this.bgHeight/2);
-        this.bg00.setPosition(0, this.canvasBottomY + this.bgHeight + this.bgHeight/2);
-        this.bg01.setPosition(0, this.canvasBottomY + this.bgHeight*2 + this.bgHeight/2);
-        this.bg02.setPosition(0, this.canvasBottomY + this.bgHeight*3 + this.bgHeight/2);
-        this.bg03.setPosition(0, this.canvasBottomY + this.bgHeight*4 + this.bgHeight/2);
-        this.bg04.setPosition(0, this.canvasBottomY + this.bgHeight*5 + this.bgHeight/2);
+        this.bg05.setPosition(0, this.fixCanvasBottomY + this.bgHeight/2);
+        this.bg00.setPosition(0, this.fixCanvasBottomY + this.bgHeight + this.bgHeight/2);
+        this.bg01.setPosition(0, this.fixCanvasBottomY + this.bgHeight*2 + this.bgHeight/2);
+        this.bg02.setPosition(0, this.fixCanvasBottomY + this.bgHeight*3 + this.bgHeight/2);
+        this.bg03.setPosition(0, this.fixCanvasBottomY + this.bgHeight*4 + this.bgHeight/2);
+        this.bg04.setPosition(0, this.fixCanvasBottomY + this.bgHeight*5 + this.bgHeight/2);
 
         // 初始化周围景色
         this.sceneryObject.active = false;
@@ -90,20 +87,20 @@ export class ScrollingBackground extends Component {
         let p4 = this.bg04.position;
         
         // 如果背景移动出屏幕，则跳到下一个循环的位置
-        if (p1.y + this.bgHeight/2 < this.canvasBottomY) {
+        if (p1.y + this.bgHeight/2 < this.fixCanvasBottomY) {
             this.bg01.setPosition(p1.x, p1.y + this.bgHeight*4);
         }
-        if (p2.y + this.bgHeight/2 < this.canvasBottomY) {
+        if (p2.y + this.bgHeight/2 < this.fixCanvasBottomY) {
             this.bg02.setPosition(p2.x, p2.y + this.bgHeight*4);
         }
-        if (p3.y + this.bgHeight/2 < this.canvasBottomY) {
+        if (p3.y + this.bgHeight/2 < this.fixCanvasBottomY) {
             this.bg03.setPosition(p3.x, p3.y + this.bgHeight*4);
         }
-        if (p4.y + this.bgHeight/2 < this.canvasBottomY) {
+        if (p4.y + this.bgHeight/2 < this.fixCanvasBottomY) {
             this.bg04.setPosition(p4.x, p4.y + this.bgHeight*4);
         }
 
-        if (this.sceneryObject.position.y + 100 < this.canvasBottomY) {
+        if (this.sceneryObject.position.y + 100 < this.fixCanvasBottomY) {
             this.spawnScenery();
         }
 
@@ -127,7 +124,7 @@ export class ScrollingBackground extends Component {
         const sceneHalfHeight = this.sceneryObject.getComponent(UITransform).height / 2 * currentScale_Y;
         // 随机决定生成在左侧还是右侧
         const xpos = math.random() < 0.5 ? -150 - sceneHalfWidth : 150 + sceneHalfWidth;
-        const ypos = this.canvasBottomY + this.spawnSceneryPosY + sceneHalfHeight;
+        const ypos = this.fixCanvasBottomY + this.spawnSceneryPosY + sceneHalfHeight;
         this.sceneryObject.setPosition(xpos, ypos);
     }
 }

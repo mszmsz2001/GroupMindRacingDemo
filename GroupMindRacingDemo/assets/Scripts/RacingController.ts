@@ -42,7 +42,7 @@ export class RacingController extends Component {
 
         // 计算并设置位置
         const visibleHeight = view.getVisibleSize().height;
-        const canvasBottomY = -visibleHeight / 2;
+        const canvasBottomY =  - visibleHeight / 2;
 
         // 设置赛道根节点位置
         this.node.setPosition(this.node.x, canvasBottomY);
