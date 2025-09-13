@@ -121,6 +121,7 @@ export class RacingController extends Component {
     public onRaceStart() {
         this.canMove = true;
         this.speedUp(); // 开始加速
+        this.scheduleOnce(() => this.acceleration = 0,1);
         // 停止播放引擎声
         if (this.loopAudioSource && this.isSoundPlaying) {
             this.loopAudioSource.stop();
@@ -182,7 +183,7 @@ export class RacingController extends Component {
     // 设置速度
     public setSpeed(newSpeed: number) {
         // 将速度限制在某个区间内，比如 0 到 this.maxSpeed
-        this.trackSpeed = math.clamp(newSpeed, 0, this.maxSpeed);
+        this.trackSpeed = math.clamp(newSpeed, this.baseSpeed, this.maxSpeed);
         this.scrollingBackground.bgSpeed = this.trackSpeed;
     }
     // 计算速度
