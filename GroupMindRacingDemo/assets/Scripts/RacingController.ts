@@ -13,9 +13,17 @@ export class RacingController extends Component {
     // 添加音效
     @property(AudioClip)
     engineSound: AudioClip = null; // 赛车引擎声
+    @property(AudioClip)
+    countdownSound: AudioClip = null; // 倒计时音效
+    @property(AudioClip)
+    environmenSound: AudioClip = null; // 环境音效
 
+    // 添加循环声音播放组件
     @property(AudioSource)
-    audioSource: AudioSource = null; // 声音播放组件
+    loopAudioSource: AudioSource = null; // 声音播放组件
+    // 添加单次声音播放组件
+    @property(AudioSource)
+    onceAudioSource: AudioSource = null; // 声音播放组件
 
     // UI里程显示
     @property(Label)
@@ -67,7 +75,6 @@ export class RacingController extends Component {
 
        // 让赛道移动
         if (this.canMove) {
-
             // 计算加速度
             const addedSpeed = this.acceleration * deltaTime;
             // 计算新速度（不超过最大值）
@@ -76,6 +83,9 @@ export class RacingController extends Component {
 
             // 更新赛道里程
             this.raceMileage += this.trackSpeed * deltaTime;
+
+            // 控制音量
+            this.controlAudioVolume();
         } else {
             this.scrollingBackground.bgSpeed = 0;
         }
@@ -95,14 +105,16 @@ export class RacingController extends Component {
 
     // 命令：倒计时开始！
     public onCountdownStart() {
-        if (!this.audioSource || !this.engineSound) return; // 确保音频组件和音频剪辑存在
+        if (!this.loopAudioSource || !this.engineSound) return; // 确保音频组件和音频剪辑存在
 
         // 播放赛车引擎声
-        if (this.audioSource && this.engineSound) {
+        if (this.loopAudioSource && this.engineSound) {
             this.isSoundPlaying = true;
-            this.audioSource.clip = this.engineSound;
-            this.audioSource.play();
+            this.loopAudioSource.loop = true; // 确保是循环播放
+            this.loopAudioSource.clip = this.engineSound;
+            this.loopAudioSource.play();
         }
+
     }
 
     // 命令：比赛开始！
@@ -110,9 +122,15 @@ export class RacingController extends Component {
         this.canMove = true;
         this.speedUp(); // 开始加速
         // 停止播放引擎声
-        if (this.audioSource && this.isSoundPlaying) {
-            this.audioSource.stop();
+        if (this.loopAudioSource && this.isSoundPlaying) {
+            this.loopAudioSource.stop();
             this.isSoundPlaying = false;
+        }
+        // 播放环境音效
+        if (!this.isSoundPlaying && this.environmenSound) {
+            this.isSoundPlaying = true;
+            this.loopAudioSource.clip = this.environmenSound;
+            this.loopAudioSource.play();
         }
     }
 
@@ -125,9 +143,30 @@ export class RacingController extends Component {
             this.canMove = false;
         }, Math.abs(this.trackSpeed / this.acceleration));
         this.collectAllMileages();
+
+        // 停止播放环境音效
+        if (this.loopAudioSource && this.isSoundPlaying) {
+            this.loopAudioSource.stop();
+            this.isSoundPlaying = false;
+        }
+    }
+
+    public onPlayAudioOnce() {
+        if (!this.onceAudioSource) return;
+        // 播放倒计时音效
+        this.onceAudioSource.clip = this.countdownSound;
+        this.onceAudioSource.play();
     }
 
     //---以上是供 GameManager 调用的公共命令---//
+
+    private controlAudioVolume() {
+        if (this.loopAudioSource && this.isSoundPlaying) {
+            // 根据当前速度调整音量，速度越快音量越大
+            const volume = math.clamp(this.trackSpeed / this.maxSpeed, 0.1, 0.6);
+            this.loopAudioSource.volume = volume;
+        }
+    }
 
     //---以下是 加速、减速 命令---//
     // 加速
@@ -147,6 +186,7 @@ export class RacingController extends Component {
         this.scrollingBackground.bgSpeed = this.trackSpeed;
     }
     // 计算速度
+    //---以上是 加速、减速 命令---//
 
     // 收集所有四辆车的里程并保存
     private collectAllMileages() {

@@ -71,6 +71,7 @@ export class GameManager extends Component {
                         this.gameState = GameState.COUNTDOWN;
                         this.timer = this.countdownTime;
                         this.countdownLabel.node.active = true;
+                        this.Players.forEach(player => player.onPlayAudioOnce()); // 播放倒计时音效
                     }, 1);
 
                     // 先设置为游戏结束，防止多次进入
