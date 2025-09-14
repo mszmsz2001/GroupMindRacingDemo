@@ -1,4 +1,4 @@
-import { _decorator, Component, math, Node, sp, Sprite, SpriteFrame, UITransform, view } from 'cc';
+import { _decorator, Component, instantiate, math, Node, Prefab, sp, Sprite, SpriteFrame, UITransform, Vec3, view } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('ScrollingBackground')
@@ -19,13 +19,21 @@ export class ScrollingBackground extends Component {
     bg05: Node = null;
 
     // 添加周围景色节点
-    @property({ type: Node, tooltip: "赛道移动速度" })
-    sceneryObject: Node = null;
+    @property({ type: Prefab, tooltip: "周围景物生成器" })
+    sceneryPrefab: Prefab = null;
     @property([SpriteFrame])
     scenerySprites: SpriteFrame[] = []; // 拖入所有树木、房子的图片
+    private leftSceneryNodes: Node[] = []; // 用于管理所有激活的左侧景物
+    private rightSceneryNodes: Node[] = []; // 用于管理所有激活的右侧景物
 
-    @property({ type: Number, tooltip: "周围景色的起始生成Y坐标" })
-    spawnSceneryPosY: number = 1000; // 生成周围景色的Y坐标
+    @property({ tooltip: "每侧预先生成的景物数量" })
+    // 每侧始终保持10个景物，赛道最多容纳9个，多1个是为了第一个景物消失时上面不会有空缺
+    sceneryCountPerSide: number = 10; 
+    @property({ tooltip: "景物之间的固定垂直间距" })
+    splitSceneryPosY: number = 100; // 景物的距离间隔
+
+    @property({ type: Number, tooltip: "周围景色的起始生成Y坐标，从赛道底端生成为0" })
+    startSpawnSceneryPosY: number = 50; // 生成周围景色的Y坐标
 
     // 不再需要 @property，因为它将由父节点控制
     // 但它仍然是一个 public 变量，外部可以访问和修改
@@ -54,8 +62,7 @@ export class ScrollingBackground extends Component {
         this.bg04.setPosition(0, this.fixCanvasBottomY + this.bgHeight*5 + this.bgHeight/2);
 
         // 初始化周围景色
-        this.sceneryObject.active = false;
-        this.spawnScenery();
+        this.initializeScenery();
 
     }
 
@@ -77,7 +84,7 @@ export class ScrollingBackground extends Component {
         this.bg04.setPosition(position4.x, position4.y - distance);
         this.bg05.setPosition(position5.x, position5.y - distance);
 
-        this.sceneryObject.setPosition(this.sceneryObject.position.x, this.sceneryObject.position.y - distance);
+        // this.sceneryPrefab.setPosition(this.sceneryPrefab.position.x, this.sceneryPrefab.position.y - distance);
 
         // 不用上面的position是因为会有一帧的差值
         let p0 = this.bg00.position;
@@ -100,32 +107,72 @@ export class ScrollingBackground extends Component {
             this.bg04.setPosition(p4.x, p4.y + this.bgHeight*4);
         }
 
-        if (this.sceneryObject.position.y + 100 < this.fixCanvasBottomY) {
-            this.spawnScenery();
-        }
+        // if (this.sceneryPrefab.position.y + 100 < this.fixCanvasBottomY) {
+        //     this.spawnScenery();
+        // }
+        const teleportDistance = this.splitSceneryPosY + this.node.getComponent(UITransform).height;
+        this.updateScenerySide(this.leftSceneryNodes, distance, teleportDistance);
+        this.updateScenerySide(this.rightSceneryNodes, distance, teleportDistance);
+
 
     }
 
-    spawnScenery() {
-        if (this.scenerySprites.length === 0) return;
-        
-        // 生成周围景色
-        this.sceneryObject.active = true;
+    // 在游戏开始时，预先生成所有景物
+    initializeScenery() {
+        if (!this.sceneryPrefab || this.scenerySprites.length === 0) return;
 
+        for (let i = 0; i < this.sceneryCountPerSide; i++) {
+            // 创建左侧景物
+            const leftNode = instantiate(this.sceneryPrefab);
+            this.node.addChild(leftNode);
+            this.leftSceneryNodes.push(leftNode);
+            // 将其放置在初始位置
+            this.setupSceneryNode(leftNode, i * this.splitSceneryPosY, true);
+
+            // 创建右侧景物
+            const rightNode = instantiate(this.sceneryPrefab);
+            this.node.addChild(rightNode);
+            this.rightSceneryNodes.push(rightNode);
+            // 将其放置在初始位置
+            this.setupSceneryNode(rightNode, i * this.splitSceneryPosY, false);
+        }
+    }
+
+    // 设置周围景色（随机）
+    setupSceneryNode(sceneNode: Node, setPositionY: number, isLeft: boolean) {
+        // 先随机替换景色
+        this.randomScenery(sceneNode)
+
+        const currentScale_X = sceneNode.scale.x;
+        const currentScale_Y = sceneNode.scale.y;
+        // 计算节点的半宽高（考虑缩放）
+        const sceneHalfWidth = sceneNode.getComponent(UITransform).width / 2 * currentScale_X;
+        const sceneHalfHeight = sceneNode.getComponent(UITransform).height / 2 * currentScale_Y;
+
+        // 设置坐标
+        const xPos = isLeft ? -150 - sceneHalfWidth : 150 + sceneHalfWidth;
+        const yPos = this.fixCanvasBottomY + this.startSpawnSceneryPosY + setPositionY;
+        sceneNode.setPosition(xPos, yPos);
+    }
+    randomScenery(node: Node) {
         // 随机选择一个图片
         const randomIndex = math.randomRangeInt(0, this.scenerySprites.length);
         const randomSprite = this.scenerySprites[randomIndex];
         // 设置节点的 Sprite 组件为随机选择的图片
-        this.sceneryObject.getComponent(Sprite).spriteFrame = randomSprite;
-        const currentScale_X = this.sceneryObject.scale.x;
-        const currentScale_Y = this.sceneryObject.scale.y;
-        // 计算节点的半宽高（考虑缩放）
-        const sceneHalfWidth = this.sceneryObject.getComponent(UITransform).width / 2 * currentScale_X;
-        const sceneHalfHeight = this.sceneryObject.getComponent(UITransform).height / 2 * currentScale_Y;
-        // 随机决定生成在左侧还是右侧
-        const xpos = math.random() < 0.5 ? -150 - sceneHalfWidth : 150 + sceneHalfWidth;
-        const ypos = this.fixCanvasBottomY + this.spawnSceneryPosY + sceneHalfHeight;
-        this.sceneryObject.setPosition(xpos, ypos);
+        node.getComponent(Sprite).spriteFrame = randomSprite;
+    }
+
+
+    // 更新景物逻辑
+    updateScenerySide(nodes: Node[], distance: number, teleportDistance: number) {
+        for (const node of nodes) {
+            node.translate(new Vec3(0, -distance, 0));
+
+            if (node.position.y + this.splitSceneryPosY/2 < this.fixCanvasBottomY) {
+                node.translate(new Vec3(0, teleportDistance, 0))
+                this.randomScenery(node);
+            }
+        }
     }
 }
 
