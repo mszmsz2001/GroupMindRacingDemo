@@ -40,7 +40,7 @@ export class RacingController extends Component {
     // 基础速度（按压开始时的速度）
     private baseSpeed: number = 100;    
     // 最大速度限制
-    maxSpeed: number = 500;
+    maxSpeed: number = 400;
     // 加速度（每秒增加的速度）
     public acceleration: number = 0;
 
